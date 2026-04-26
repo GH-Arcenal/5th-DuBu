@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Little World 🦦🐧</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Dancing+Script:wght@400;600;700&family=Lora:ital,wght@0,400;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blush: #f5c2c7;
+  --baby-blue: #b8d4f0;
+  --lavender: #d4c2e8;
+  --rose: #e8a0a8;
+  --text-dark: #f0e8f8;
+  --text-mid: #d4c4e8;
+  --text-light: #a898c8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Lora', serif;
+  background: #07040f;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  min-height: 100vh;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Ctext y='18' font-size='18'%3E🦦%3C/text%3E%3C/svg%3E") 11 11, auto;
+}
+
+/* ---- GLOBAL STARRY BG ---- */
+#starBg {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+}
+#nebula {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(184,212,240,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(245,194,199,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(212,194,232,0.05) 0%, transparent 70%);
+}
+
+/* ---- PAGES ---- */
+.page {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: none;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+.page.active { display: block; }
+.page.active.visible { opacity: 1; }
+
+.page-inner {
+  padding: 5.5rem 1.5rem 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ---- COUNTDOWN ---- */
+#countdown-screen {
+  position: fixed; inset: 0;
+  z-index: 9999;
+  background: #07040f;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 1.5s ease, transform 1.5s ease;
+}
+#countdown-screen.fade-out {
+  opacity: 0; transform: scale(1.05); pointer-events: none;
+}
+.cd-content { position:relative; z-index:2; text-align:center; padding:2rem; }
+.cd-emoji {
+  font-size:4rem; display:block; margin-bottom:1rem;
+  animation: floatY 3s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+.cd-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.6rem,4vw,2.8rem);
+  color: #f0d4f0; margin-bottom:.5rem;
+  text-shadow: 0 0 30px rgba(240,180,220,.6);
+}
+.cd-sub { font-family:'Lora',serif; font-style:italic; color:#c0a0d0; font-size:1rem; margin-bottom:2.5rem; }
+.cd-timer { display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap; margin-bottom:2rem; }
+.time-block {
+  display:flex; flex-direction:column; align-items:center;
+  background:rgba(255,255,255,.07); border:1px solid rgba(240,180,220,.2);
+  border-radius:16px; padding:1rem 1.4rem; min-width:76px;
+  backdrop-filter:blur(10px);
+}
+.time-number { font-family:'Playfair Display',serif; font-size:2.4rem; color:#f8d4ec; line-height:1; text-shadow:0 0 20px rgba(248,200,240,.5); }
+.time-label { font-size:.65rem; color:#a080b0; letter-spacing:.1em; text-transform:uppercase; margin-top:.4rem; }
+.cd-heart {
+  position:fixed; font-size:1.2rem;
+  animation: floatUp linear infinite; opacity:0;
+  pointer-events:none; z-index:1;
+}
+@keyframes floatUp {
+  0%   { transform:translateY(100vh) rotate(0deg); opacity:0; }
+  10%  { opacity:.5; }
+  90%  { opacity:.2; }
+  100% { transform:translateY(-10vh) rotate(20deg); opacity:0; }
+}
+
+/* ---- NAV ---- */
+#main-nav {
+  position:fixed; top:0; left:0; right:0;
+  z-index:500; display:none;
+  background:rgba(7,4,15,.8);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(245,194,199,.12);
+  padding:.7rem 1rem;
+  justify-content:center; flex-wrap:wrap; gap:.3rem;
+}
+#main-nav.on { display:flex; }
+nav a {
+  font-family:'Dancing Script',cursive; font-size:clamp(.8rem,2.5vw,1.05rem);
+  color:var(--text-mid); text-decoration:none;
+  padding:.35rem .7rem; border-radius:20px;
+  transition:background .2s, color .2s; white-space:nowrap;
+}
+nav a:hover, nav a.cur {
+  background:rgba(245,194,199,.18); color:#f5c2c7;
+}
+
+/* ---- SECTION TITLES ---- */
+.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,5vw,3rem); font-style:italic;
+  text-align:center; color:var(--text-dark);
+  margin-bottom:.4rem;
+  text-shadow:0 0 30px rgba(245,194,199,.2);
+}
+.section-deco { text-align:center; font-size:1.4rem; letter-spacing:.6em; margin-bottom:3rem; opacity:.7; }
+
+/* ---- REVEAL ---- */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease; }
+.reveal.on { opacity:1; transform:translateY(0); }
+
+/* ============================================
+   LANDING
+============================================ */
+#page-landing {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:2rem; min-height:100vh;
+}
+.land-ring {
+  width:min(320px,80vw); height:min(320px,80vw);
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(245,194,199,.12), rgba(184,212,240,.08));
+  margin-bottom:2rem;
+  box-shadow:0 0 60px rgba(245,194,199,.2),0 0 120px rgba(184,212,240,.1);
+  animation:landPulse 3s ease-in-out infinite;
+  position:relative; overflow:hidden;
+  flex-shrink:0;
+}
+@keyframes landPulse {
+  0%,100%{box-shadow:0 0 60px rgba(245,194,199,.2),0 0 120px rgba(184,212,240,.1)}
+  50%    {box-shadow:0 0 90px rgba(245,194,199,.4),0 0 180px rgba(184,212,240,.2)}
+}
+.land-emoji {
+  font-size:6rem;
+  animation:dance 1.6s ease-in-out infinite alternate;
+  user-select:none;
+}
+@keyframes dance {
+  0%   {transform:rotate(-8deg) scale(.95) translateY(6px)}
+  100% {transform:rotate(8deg)  scale(1.05) translateY(-6px)}
+}
+.land-greet {
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  color:var(--text-dark); margin-bottom:.4rem;
+  text-shadow:0 0 20px rgba(245,194,199,.3);
+}
+.land-sub {
+  font-family:'Lora',serif; font-style:italic;
+  color:var(--text-light); font-size:.95rem;
+  margin-bottom:2.5rem; max-width:480px; line-height:1.7;
+}
+.enter-btn {
+  font-family:'Dancing Script',cursive; font-size:1.3rem;
+  padding:.9rem 2.2rem;
+  background:linear-gradient(135deg,#f5c2c7,#d4a8e0);
+  color:#fff; border:none; border-radius:50px; cursor:pointer;
+  box-shadow:0 8px 30px rgba(245,194,199,.4);
+  transition:transform .2s, box-shadow .2s, opacity .4s, left .15s, top .15s;
+  position:fixed; white-space:nowrap; z-index:100;
+}
+.enter-btn:hover { box-shadow:0 12px 40px rgba(245,194,199,.7); }
+
+/* ============================================
+   STORY
+============================================ */
+.tl-path { position:relative; padding:2rem 0; }
+.tl-path::before {
+  content:''; position:absolute;
+  left:50%; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,#f5c2c7,#b8d4f0,#d4c2e8,#f5c2c7);
+  transform:translateX(-50%); opacity:.4;
+}
+.tl-entry {
+  display:flex; align-items:flex-start; gap:2rem;
+  margin-bottom:4rem;
+  opacity:0; transform:translateY(40px);
+  transition:opacity .7s ease, transform .7s ease;
+  position:relative;
+}
+.tl-entry.on { opacity:1; transform:translateY(0); }
+.tl-entry:nth-child(even) { flex-direction:row-reverse; }
+.tl-entry:nth-child(even) .tl-card { text-align:right; }
+.tl-dot {
+  position:absolute; left:50%; top:1rem; transform:translateX(-50%);
+  width:40px; height:40px;
+  background:linear-gradient(135deg,#f5c2c7,#d4c2e8);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem;
+  box-shadow:0 4px 20px rgba(245,194,199,.5); z-index:2;
+}
+.tl-card {
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(245,194,199,.14);
+  border-radius:20px; padding:1.5rem;
+  width:calc(50% - 40px);
+  backdrop-filter:blur(10px);
+}
+.tl-date { font-family:'Dancing Script',cursive; color:#f5c2c7; font-size:1.1rem; font-weight:600; margin-bottom:.3rem; }
+.tl-ttl  { font-family:'Playfair Display',serif; font-size:1.05rem; font-style:italic; color:var(--text-dark); margin-bottom:.5rem; }
+.tl-note { font-size:.9rem; color:var(--text-light); line-height:1.6; }
+@media(max-width:600px){
+  .tl-path::before { left:28px; }
+  .tl-entry,.tl-entry:nth-child(even) { flex-direction:column; align-items:flex-start; padding-left:64px; }
+  .tl-dot { left:28px; top:0; }
+  .tl-card { width:100%; }
+  .tl-entry:nth-child(even) .tl-card { text-align:left; }
+}
+
+/* ---- MOBILE (Infinix 40i ~390px) ---- */
+@media(max-width:420px){
+  /* nav */
+  nav a { font-size:.85rem; padding:.3rem .6rem; }
+
+  /* countdown */
+  .cd-timer { gap:.6rem; }
+  .time-block { padding:.7rem .8rem; min-width:60px; }
+  .time-number { font-size:1.8rem; }
+
+  /* landing */
+  .land-ring { width:min(260px,78vw); height:min(260px,78vw); }
+  .land-greet { font-size:1.2rem; }
+  .land-sub { font-size:.88rem; }
+
+  /* gallery polaroids */
+  .polaroid { max-width:calc(50vw - 1.5rem); }
+  .polaroid-img { width:calc(50vw - 2.8rem); height:calc(50vw - 2.8rem); }
+
+  /* page inner padding */
+  .page-inner { padding:4.5rem 1rem 3rem; }
+
+  /* letter */
+  .letter-wrap { padding:1.5rem 1rem; }
+  .letter-body { font-size:.95rem; }
+
+  /* section title */
+  .section-title { font-size:1.8rem; }
+
+  /* timeline card */
+  .tl-card { padding:1rem; }
+  .tl-note { font-size:.85rem; }
+}
+
+/* ============================================
+   GALLERY
+============================================ */
+.polaroid-grid { display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; }
+.polaroid {
+  background:rgba(255,255,255,.94);
+  padding:.9rem .9rem 2.8rem; max-width:200px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  cursor:pointer; border-radius:3px;
+  transition:transform .3s, box-shadow .3s;
+}
+.polaroid:nth-child(odd)  { transform:rotate(-2.5deg); }
+.polaroid:nth-child(even) { transform:rotate(2deg); }
+.polaroid:nth-child(3n)   { transform:rotate(-1deg); }
+.polaroid:hover { transform:rotate(0deg) translateY(-12px) scale(1.06) !important; box-shadow:0 24px 60px rgba(245,194,199,.5); z-index:10; }
+.polaroid-img {
+  width:160px; height:160px;
+  background:linear-gradient(135deg,rgba(245,194,199,.3),rgba(184,212,240,.3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:3.5rem; border-radius:2px; overflow:hidden; color:#888;
+}
+.polaroid-img img { width:100%; height:100%; object-fit:cover; }
+.polaroid-cap { font-family:'Dancing Script',cursive; text-align:center; color:#6a5050; font-size:.9rem; margin-top:.7rem; display:block; }
+/* lightbox */
+.lbx {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.87);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; opacity:0; pointer-events:none; transition:opacity .3s; padding:1rem;
+}
+.lbx.on { opacity:1; pointer-events:all; }
+.lbx-inner {
+  background:rgba(255,255,255,.95);
+  padding:1.2rem 1.2rem 3.5rem; border-radius:6px;
+  transform:scale(.8); transition:transform .3s; text-align:center; max-width:90vw;
+}
+.lbx.on .lbx-inner { transform:scale(1); }
+.lbx-img {
+  width:min(280px,80vw); height:min(280px,80vw);
+  background:linear-gradient(135deg,rgba(245,194,199,.3),rgba(184,212,240,.3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:5rem; overflow:hidden;
+}
+.lbx-img img { width:100%; height:100%; object-fit:cover; }
+.lbx-cap { font-family:'Dancing Script',cursive; color:#6a5050; font-size:1.2rem; margin-top:1rem; }
+.lbx-x { position:fixed; top:1rem; right:1.2rem; background:none; border:none; font-size:2.2rem; cursor:pointer; color:#fff; z-index:10; }
+
+/* ============================================
+   LETTER
+============================================ */
+.letter-wrap {
+  max-width:680px; margin:0 auto;
+  background:rgba(253,249,240,.06);
+  border:1px solid rgba(245,194,199,.14);
+  border-radius:6px; padding:3rem 3.5rem;
+  backdrop-filter:blur(12px);
+  background-image:repeating-linear-gradient(transparent,transparent 27px,rgba(184,212,240,.1) 27px,rgba(184,212,240,.1) 28px);
+}
+@media(max-width:600px){ .letter-wrap{ padding:2rem 1.5rem; } }
+.letter-dear { font-family:'Dancing Script',cursive; font-size:1.8rem; color:#f5c2c7; margin-bottom:1.5rem; }
+.letter-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:2rem; gap:1rem;
+  border-bottom:1px solid rgba(245,194,199,.2); padding-bottom:1.5rem;
+}
+.letter-person {
+  display:flex; flex-direction:column; align-items:center; gap:.3rem; flex:1;
+}
+.letter-role {
+  font-family:'Dancing Script',cursive; font-size:1rem; color:var(--text-light);
+}
+.letter-name {
+  font-family:'Playfair Display',serif; font-size:.95rem; font-style:italic;
+  color:var(--text-dark); text-align:center;
+}
+.letter-center-header {
+  display:flex; flex-direction:column; align-items:center; gap:.4rem; flex:1.2;
+}
+.letter-big-heart { font-size:3rem; animation:hPulse 1.5s ease-in-out infinite; }
+.letter-monthsary-txt {
+  font-family:'Dancing Script',cursive; font-size:1.15rem; color:#f5c2c7;
+  text-align:center; line-height:1.4;
+}
+@media(max-width:600px){
+  .letter-header { flex-direction:column; }
+  .letter-center-header { order:-1; }
+}
+.letter-body { font-family:'Nunito',sans-serif; font-size:1.08rem; font-weight:400; color:var(--text-mid); line-height:2; min-height:200px; white-space:pre-wrap; letter-spacing:0.01em; }
+.letter-sign { font-family:'Dancing Script',cursive; font-size:1.5rem; color:var(--text-dark); margin-top:2rem; text-align:right; }
+.music-row {
+  display:flex; align-items:center; gap:1rem; margin-top:2rem;
+  padding:1rem 1.5rem;
+  background:rgba(245,194,199,.08); border-radius:50px;
+  border:1px solid rgba(245,194,199,.22);
+}
+.mus-btn {
+  background:linear-gradient(135deg,#f5c2c7,#d4c2e8);
+  border:none; border-radius:50%; width:44px; height:44px;
+  font-size:1.2rem; cursor:pointer;
+  box-shadow:0 4px 15px rgba(245,194,199,.4); transition:transform .2s; flex-shrink:0;
+}
+.mus-btn:hover { transform:scale(1.1); }
+.mus-title { font-family:'Dancing Script',cursive; font-size:1.1rem; color:var(--text-dark); }
+.mus-sub { font-size:.8rem; color:var(--text-light); }
+.mus-bars { display:flex; gap:3px; align-items:flex-end; height:20px; }
+.mus-bar {
+  width:4px; background:linear-gradient(to top,#f5c2c7,#d4c2e8);
+  border-radius:2px; height:5px;
+  animation:barDance .6s ease-in-out infinite alternate;
+}
+.mus-bar:nth-child(2){animation-delay:.1s}
+.mus-bar:nth-child(3){animation-delay:.2s}
+.mus-bar:nth-child(4){animation-delay:.15s}
+.mus-bar:nth-child(5){animation-delay:.05s}
+@keyframes barDance{ from{height:4px} to{height:20px} }
+.mus-bar.paused { animation-play-state:paused; height:5px; }
+
+/* ============================================
+   REASONS — pure floating hearts
+============================================ */
+#floatingField {
+  position:fixed; inset:0;
+  z-index:10; pointer-events:none;
+  overflow:hidden; display:none;
+}
+#floatingField.show { display:block; pointer-events:all; }
+
+.fheart {
+  position:absolute;
+  font-size:clamp(2rem,5vw,3rem);
+  cursor:pointer; user-select:none;
+  animation:hDrift linear infinite;
+  filter:drop-shadow(0 0 8px rgba(245,150,170,.5));
+  line-height:1;
+}
+.fheart:hover { filter:drop-shadow(0 0 20px rgba(245,150,170,.9)); }
+@keyframes hDrift {
+  0%   { opacity:0; transform:translateY(108vh) translateX(0px) rotate(0deg); }
+  5%   { opacity:1; }
+  35%  { transform:translateY(65vh) translateX(var(--sw)) rotate(var(--r)); opacity:1; }
+  65%  { transform:translateY(35vh) translateX(calc(var(--sw)*-0.7)) rotate(calc(var(--r)*-0.8)); opacity:1; }
+  92%  { opacity:.7; }
+  100% { opacity:0; transform:translateY(-12vh) translateX(var(--sw2)) rotate(var(--r2)); }
+}
+
+/* header overlay for reasons page */
+#page-reasons .page-inner {
+  position:relative; z-index:20;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start;
+  padding-top:6rem; pointer-events:none;
+}
+.reasons-hint {
+  font-family:'Dancing Script',cursive; font-size:1.2rem;
+  color:var(--text-light); text-align:center; margin-top:.8rem;
+  animation:floatY 2.5s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* heart modal */
+.hmodal {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.65);
+  display:flex; align-items:center; justify-content:center;
+  z-index:2000; opacity:0; pointer-events:none; transition:opacity .4s; padding:1rem;
+}
+.hmodal.on { opacity:1; pointer-events:all; }
+.hmodal-card {
+  background:linear-gradient(135deg,rgba(25,12,45,.97),rgba(18,8,35,.97));
+  border:1px solid rgba(245,194,199,.25); border-radius:24px; padding:2.5rem;
+  max-width:360px; width:100%; text-align:center;
+  box-shadow:0 30px 80px rgba(245,194,199,.2),0 0 60px rgba(212,194,232,.12);
+  transform:scale(.5) translateY(40px);
+  transition:transform .4s cubic-bezier(.175,.885,.32,1.275);
+  backdrop-filter:blur(20px);
+}
+.hmodal.on .hmodal-card { transform:scale(1) translateY(0); }
+.hmodal-emoji { font-size:4rem; display:block; margin-bottom:1rem; animation:hPulse 1s ease-in-out infinite; }
+@keyframes hPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
+.hmodal-text { font-family:'Dancing Script',cursive; font-size:1.4rem; color:var(--text-dark); line-height:1.6; margin-bottom:1.5rem; }
+.hmodal-close {
+  background:linear-gradient(135deg,#f5c2c7,#d4c2e8);
+  border:none; border-radius:50px; padding:.7rem 2rem;
+  font-family:'Dancing Script',cursive; font-size:1.1rem; color:#fff; cursor:pointer;
+}
+
+/* ============================================
+   FINALE
+============================================ */
+#page-finale .page-inner {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; min-height:100vh; text-align:center;
+}
+.finale-btn {
+  width:150px; height:150px; border-radius:50%;
+  background:linear-gradient(135deg,#f5c2c7,#d4c2e8,#b8d4f0);
+  border:none; font-size:4.5rem; cursor:pointer;
+  box-shadow:0 0 40px rgba(245,194,199,.5),0 0 80px rgba(212,194,232,.25);
+  animation:fGlow 2s ease-in-out infinite; transition:transform .3s; margin-bottom:1.5rem;
+}
+.finale-btn:hover { transform:scale(1.1); }
+@keyframes fGlow {
+  0%,100%{box-shadow:0 0 40px rgba(245,194,199,.5),0 0 80px rgba(212,194,232,.25)}
+  50%    {box-shadow:0 0 70px rgba(245,194,199,.8),0 0 130px rgba(212,194,232,.45)}
+}
+.finale-hint { font-family:'Dancing Script',cursive; color:var(--text-light); font-size:1.15rem; }
+.foverlay {
+  position:fixed; inset:0;
+  background:rgba(4,1,12,.97);
+  z-index:999; opacity:0; pointer-events:none; transition:opacity 1s ease;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:2rem;
+}
+.foverlay.on { opacity:1; pointer-events:all; }
+.fmsg {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.4rem,4vw,2.2rem); font-style:italic;
+  color:#fce8f0; max-width:580px; line-height:1.8;
+  opacity:0; transform:translateY(30px);
+  transition:opacity 1.5s ease .8s, transform 1.5s ease .8s;
+}
+.foverlay.on .fmsg { opacity:1; transform:translateY(0); }
+.fsign { font-family:'Dancing Script',cursive; font-size:1.8rem; color:#f5c2c7; margin-top:1.5rem; opacity:0; transition:opacity 1.5s ease 2.2s; }
+.foverlay.on .fsign { opacity:1; }
+.fclose {
+  margin-top:2.5rem;
+  background:rgba(245,194,199,.18); border:1px solid rgba(245,194,199,.38);
+  border-radius:50px; padding:.7rem 2rem;
+  font-family:'Dancing Script',cursive; font-size:1.2rem; color:#fce8f0; cursor:pointer;
+  opacity:0; transition:opacity 1.5s ease 3.5s;
+}
+.foverlay.on .fclose { opacity:1; }
+.burst-wrap { position:fixed; inset:0; pointer-events:none; z-index:1000; }
+.burst-h { position:absolute; font-size:1.5rem; animation:burstGo 2.2s ease-out forwards; }
+@keyframes burstGo {
+  0%   {transform:translate(0,0) scale(0); opacity:1}
+  100% {transform:translate(var(--tx),var(--ty)) scale(1.6); opacity:0}
+}
+
+/* ---- FOOTER ---- */
+footer {
+  position: relative; z-index: 1;
+  padding: 2.2rem 1.5rem 2.5rem;
+  border-top: 1px solid rgba(245,194,199,.15);
+  background: rgba(7,4,15,.6);
+  backdrop-filter: blur(12px);
+}
+.ft-inner {
+  max-width: 820px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+.ft-person {
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.ft-role {
+  font-family: 'Dancing Script', cursive;
+  font-size: .8rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-light); opacity: .75;
+}
+.ft-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(.95rem, 2vw, 1.2rem);
+  font-style: italic; color: var(--text-dark);
+  line-height: 1.3;
+}
+.ft-nickname {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(.85rem, 1.8vw, 1.05rem);
+  color: #f5c2c7;
+}
+.ft-left  { text-align: left; }
+.ft-right { text-align: right; }
+.ft-center {
+  display: flex; flex-direction: column;
+  align-items: center; gap: .4rem;
+  text-align: center;
+}
+.ft-heart {
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  animation: ftPulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(245,150,170,.55));
+  line-height: 1;
+}
+@keyframes ftPulse {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+.ft-label {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(.9rem, 2.2vw, 1.15rem);
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+@media(max-width:520px){
+  .ft-inner {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    text-align: center !important;
+  }
+  .ft-left, .ft-right { text-align: center !important; }
+  .ft-right { order: 3; }
+  .ft-center { order: 2; margin: .5rem 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL BG -->
+<canvas id="starBg"></canvas>
+<div id="nebula"></div>
+
+<!-- ========== COUNTDOWN ========== -->
+<div id="countdown-screen">
+  <div class="cd-content">
+    <span class="cd-emoji">🐧</span>
+    <h1 class="cd-title">Something special is waiting for you, Pengu 🐧…</h1>
+    <p class="cd-sub">A little world made just for you is about to open its doors</p>
+    <div class="cd-timer">
+      <div class="time-block"><span class="time-number" id="cd-d">00</span><span class="time-label">Days</span></div>
+      <div class="time-block"><span class="time-number" id="cd-h">00</span><span class="time-label">Hours</span></div>
+      <div class="time-block"><span class="time-number" id="cd-m">00</span><span class="time-label">Minutes</span></div>
+      <div class="time-block"><span class="time-number" id="cd-s">00</span><span class="time-label">Seconds</span></div>
+    </div>
+    <p id="unlockDate" style="font-family:'Dancing Script',cursive;color:#c0a0d0;font-size:.95rem;">Unlocking on April 28, 2026 · 12:00 AM 🌙</p>
+    <button id="openBtn" onclick="penguUnlock()"
+      style="margin-top:1.6rem;background:linear-gradient(135deg,#f5c2c7,#d4a8e0);border:none;
+             border-radius:50px;padding:.75rem 2.2rem;font-family:'Dancing Script',cursive;
+             font-size:1.2rem;color:#fff;cursor:pointer;
+             box-shadow:0 8px 30px rgba(245,194,199,.4);transition:opacity .6s ease;">
+      open it 💖
+    </button>
+    <p id="penguErr" style="font-family:'Lora',serif;font-style:italic;color:#e8a0a8;font-size:.85rem;opacity:0;transition:opacity .3s;margin-top:.6rem;">It is still not time… 🌙</p>
+  </div>
+  <!-- secret dev password — bottom right, Enter only -->
+  <div style="position:fixed;bottom:1rem;right:1rem;">
+    <input id="pwInput" type="password" placeholder="🔒"
+      style="width:70px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+             border-radius:20px;padding:.25rem .6rem;font-family:'Dancing Script',cursive;
+             font-size:.75rem;color:rgba(240,212,240,.4);outline:none;text-align:center;"
+      onkeydown="if(event.key==='Enter')checkPw()"/>
+  </div>
+</div>
+
+<!-- ========== NAV ========== -->
+<nav id="main-nav">
+  <a href="#" onclick="go('story');return false"   id="ns">Our Story 🌸</a>
+  <a href="#" onclick="go('gallery');return false" id="ng">Gallery 📸</a>
+  <a href="#" onclick="go('letter');return false"  id="nr">Love Letter 💌</a>
+  <a href="#" onclick="go('reasons');return false" id="nw">Why I Love You 💕</a>
+  <a href="#" onclick="go('finale');return false"  id="nf">Surprise 🎁</a>
+</nav>
+
+<!-- ========== LANDING ========== -->
+<div class="page" id="page-landing" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
+  <div class="land-ring" id="landRing">
+    <video id="landVideo" autoplay muted loop playsinline
+      style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;">
+      <source src="Pengu and Otter.mp4" type="video/mp4">
+    </video>
+    <div class="land-emoji" id="landFallback" style="font-size:6rem;display:none;align-items:center;justify-content:center;width:100%;height:100%;position:absolute;">🦦🐧</div>
+  </div>
+  <h1 class="land-greet">It's me again abwebi on our monthsary! Hewwo my cutie hot Pengu 🐧, from your mataray at makulit na Otter 🦦</h1>
+  <p class="land-sub">I prepared this website for you asawa ko for weeks na hehe I hope ma appreciate mo ang gawa ko for you, this was a challenge but I made it work as much as kaya ko. Enter to our small little world my one and only bubu!</p>
+  <div id="btnPlaceholder" style="height:56px;margin-top:1rem;"></div>
+  <button class="enter-btn" id="enterBtn" onclick="handleEnter()">Click me abwebi 💖</button>
+</div>
+
+<!-- ========== STORY ========== -->
+<div class="page" id="page-story">
+  <div class="page-inner">
+    <h2 class="section-title reveal">Our Story</h2>
+    <div class="section-deco reveal">🦦 · 🐧</div>
+    <div class="tl-path">
+
+      <div class="tl-entry">
+        <div class="tl-dot">✨</div>
+        <div class="tl-card">
+          <div class="tl-date">December 28, 2024 · 11:22 PM</div>
+          <div class="tl-ttl">"The moment everything began…"</div>
+          <div class="tl-note">It was out of the ordinary na magmmatch yung oras na online tayo ng sabay asawa ko… it feels weird but it feels right. That was the exact moment I felt it was always and meant to happen, tadhana kumabaga abwebi.</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌼</div>
+        <div class="tl-card">
+          <div class="tl-date">January 12, 2025</div>
+          <div class="tl-ttl">"Sa fields of grass you're the only dandelion"</div>
+          <div class="tl-note">You first called me "Dandelion" which was sobrang cute and sweet asawa ko… di ko ma explain saya ko nun pero punong puno ang heart ko… yung message mo is "Sa fields of grass you're the only dandelion"</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🐧</div>
+        <div class="tl-card">
+          <div class="tl-date">January 27, 2025 · 11:06 AM</div>
+          <div class="tl-ttl">"Pengu (Plushie) is home"</div>
+          <div class="tl-note">Mas tumatag yung pagkikilala natin sa isa't isa asawa ko and my best surprise every for me is the pengu plushie that reminds me palagi na I have a cute and makulit na bubu… sobrang saya ko sa araw na to kasi hindi ako makapigil sa sarili ko na itago ang secret that I got a pengu plushie para sa monthsary natin!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌷</div>
+        <div class="tl-card">
+          <div class="tl-date">February 14, 2025 · 2:05 AM</div>
+          <div class="tl-ttl">"Our first valentine's"</div>
+          <div class="tl-note">Our first ever valentine's na muntik ng di matuloy at all because of the pinakaworst na gulo natin :(… but everything went right nung nagusap tayo properly pero may konting layo sa vibes pero pilit nirrebuild lahat ng nasimulan and thank you abwebi for giving me the chance to prove myself ulit. Eto din yung araw na I made a flower vase using cardboard tas namitas ako ng flowers sa street naming hehe naglibot libot pa ako neto para lang may ma surprise ako sayo bubu &lt;3</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">📱</div>
+        <div class="tl-card">
+          <div class="tl-date">February 18, 2025 · 10:36 PM</div>
+          <div class="tl-ttl">"Our heart wallpaper"</div>
+          <div class="tl-note">The day nagawa natin ang heart wallpaper natin hehe, sobrang memorable to for me asawa ko kasi every bukas ko ng phone ko reminds me of my lablab na bubu! Nakita ko lang yun sa isang youtube reels then napasabi ako "hmm… gawin naming ni abwebi hehe!" and we did and sobrang masayang pa din ako until now kasi I still have that wallpaper sa isang phone where it first started!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🎨</div>
+        <div class="tl-card">
+          <div class="tl-date">February 21, 2025 · 11:41 PM</div>
+          <div class="tl-ttl">"That drawing 😂"</div>
+          <div class="tl-note">Oh diba dami ganap sa February… this day nag draw ikaw ng something sexual asawa ko hehe, something na until now nahihirapan parin si dudu gawin sayo and that drawing was… the carry fuck HAHAHAH! Sa next balik ko abwebi let's do it pero ididikit kita sa wall for support hehehe</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🫶</div>
+        <div class="tl-card">
+          <div class="tl-date">March 5, 2025 · 8:25 PM</div>
+          <div class="tl-ttl">"The drawing na lagi kong iniisip"</div>
+          <div class="tl-note">Yung drawing mo nun na naka patong ikaw sa lap ko habang naka upo ako, I always think about it nun gaano siguro ako kasaya doing it with you… and we did more than that nung nagkita tayo asawa ko, so many lambingan moments na always nakatatak sa isip ko &lt;3</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🕺</div>
+        <div class="tl-card">
+          <div class="tl-date">April 9, 2025 · 7:31 PM</div>
+          <div class="tl-ttl">"The kembot kembot dance"</div>
+          <div class="tl-note">Tawang tawa pa din ako hangang ngayon sa mga kaya kong gawin para lang mapatawa at mapasaya ikaw asawa ko AHHAHAH, eto yung araw na nagsayaw ako ng kembot kembot na tinakpan ko mukha ko na napaluhod nalang ako sa tuwa at hiya hays abwebiiii raghhhhh!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🧵</div>
+        <div class="tl-card">
+          <div class="tl-date">April 17, 2025 · 8:58 AM</div>
+          <div class="tl-ttl">"Pengu's Canvas"</div>
+          <div class="tl-note">The special day I finished my sobrang tagal tapusin na pengu gawa sa threads na wala ikaw kaalam alam at all hehe and now nasayo na abwebi, masaya ako na nabigay ko yan sayo finally ng personal… kasi it is made for you abwebi eh, dudu's blood, sweat and tears is nabuhos diyan and I hope na appreciate mo yung canvas nung na receive mo.</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🖼️</div>
+        <div class="tl-card">
+          <div class="tl-date">April 26, 2025 · 10:06 PM</div>
+          <div class="tl-ttl">"Magkasama tayo in one frame"</div>
+          <div class="tl-note">You made the digital art possible abwebi na magkasama tayo in one frame! Isang pangarap lang na waiting lang matupad or mangyari nun na magkasama tayo in one picture… sobrang manghawa ako sa nagawa mo dito abwebi until now di pa din ako makapaniwala kasi sobrang linis ng gawa mo always… I love you asawa kooooo sobra and thank you for drawing us kahit konti lang time mo!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🎵</div>
+        <div class="tl-card">
+          <div class="tl-date">April 28, 2025 · 6:35 PM</div>
+          <div class="tl-ttl">"Sa Kabila ng Layo"</div>
+          <div class="tl-note">The day I revealed to you the song I personally composed for many weeks! "Sa Kabila ng Layo" paired sa AI made photo portrait natin dalawa on a set… bibili talaga ako ng stand pagbalik ko diyan! It was the best song I composed so far kasi binuhos ko lahat dito and I felt happy na you appreciate what I made for you asawa ko.</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">👑</div>
+        <div class="tl-card">
+          <div class="tl-date">May 17, 2025</div>
+          <div class="tl-ttl">"Para kang Prince"</div>
+          <div class="tl-note">Acquaintance Party abwebi… the day you said na para akong Prince dahil sa suot ko! Sobrang happy adudu nun sa sinabi mo asawa ko kasi nakakataba ng puso na ganyan ang tingin mo sa akin hehe thank you abwebi for always boosting my confidence!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">💐</div>
+        <div class="tl-card">
+          <div class="tl-date">July 28, 2025</div>
+          <div class="tl-ttl">"A bouquet made with love"</div>
+          <div class="tl-note">Our 7th monthsary, the time I made you a bouquet of flowers made of fuzzy wires! Suot ko pa dito yung polo and tie ko mwehehhe para complete ang outfit and surprise adudu which you loved sobra asawa ko… I can't wait to give you one in person soon!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🏥</div>
+        <div class="tl-card">
+          <div class="tl-date">August 2, 2025 · 12:43 PM</div>
+          <div class="tl-ttl">"More freedom, longer calls"</div>
+          <div class="tl-note">Eto yung araw na bumisita kayo sa boarding house na tutuluyan mo after you got accepted sa Don Modesto Formilleza Sr. Memorial Hospital… eto din yung araw na napaguusapan natin yung mga calls na gagawin natin kasi mas may freedom ka na and sobrang happy ako neto kasi I get to see you longer without any hesitation huhuhu</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">✏️</div>
+        <div class="tl-card">
+          <div class="tl-date">August 28, 2025</div>
+          <div class="tl-ttl">"Your portrait of me"</div>
+          <div class="tl-note">The surprise na hindi ko inexpect at all… it was your portrait of me asawa ko na gawa mo kahit sobrang busy ikaw pinilit mo parin tapusin! I love it sobra! I appreciate it abwebi kasi you worked hard for it and it takes a lot of skill para gawin mo to! Nagulat pa din ako kasi you made me a digital art dati pero this is is iba abwebi eh, its by pencil like wahhhhh my bubu is sobrang talented hehe!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🎂</div>
+        <div class="tl-card">
+          <div class="tl-date">November 1, 2025 · 12:00 AM</div>
+          <div class="tl-ttl">"Dudu's surprise cake"</div>
+          <div class="tl-note">Dudu's surprise was to make a cake hehe, since wala oven adudu I made sure may magagawa pa din ako solution! I bought ingredients… and syempre candles! I did my best to greet you on your special day asawa ko… dami pa surprises naka wait dun kaya I was so glad na masaya ikaw sa nagawa ko even if it is all I could do that time for you.</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">✈️</div>
+        <div class="tl-card">
+          <div class="tl-date">December 14, 2025 · 5:44 PM</div>
+          <div class="tl-ttl">"Dudu's first flight"</div>
+          <div class="tl-note">Sobrang excited na ako neto asawa ko nag empake na ako ng maleta kahit malayo layo pa flight ko HAHAHAHHA, dudu's first time flying and of course for our first meetup as bubu and dudu! Saglit lang stay ko as far as I remember pero we spent it well and nagenjoy ako sobra abwebi hehe</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌅</div>
+        <div class="tl-card">
+          <div class="tl-date">December 17, 2025 · 2:59 AM → 3:55 PM</div>
+          <div class="tl-ttl">"I kept my promise"</div>
+          <div class="tl-note">I woke up way too early para sa flight ko abwebi dahil sa sobrang excited ko and I made sure I kept my promise na I will meet you na naka comfy shirt and sweatpants lang hehe, eto din yung day na nahawakan mo ang aking pinakainaalagaan na dragon na nagulat ikaw na malaki pala talaga HAHAHAH and also the day first time mo sinubo tiwtiw ko hehe (3:55 PM) which is kakagising mo lang hehe and napapaiyak pa ang abwebi ko awawa naman then another one sa rooftop HAHAHHA grabe</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🍜</div>
+        <div class="tl-card">
+          <div class="tl-date">December 18, 2025 · 10:57 AM</div>
+          <div class="tl-ttl">"Our first date"</div>
+          <div class="tl-note">Our first date and kumain tayo ang siomai, lomi, and of course yung sayo is yung palabok mo… honestly abwebi lahat ng food na kinakain natin somehow tastes better and I am sure its because kasama kita and I am genuinely happy and free because of you!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌙</div>
+        <div class="tl-card">
+          <div class="tl-date">December 19, 2025 · 1:21 AM</div>
+          <div class="tl-ttl">"Our madaling araw"</div>
+          <div class="tl-note">Our madaling araw na sex HAHAHAHA, tawang tawa ako for some reason abwebi kasi yung tiwtiw ko parang lightsaber na and nahirapan pa ikaw ipasuot sa aking ang condom! For me lang abwebi ha, it was full of love and syempre pananabik din kasi we only dreamed of meeting each other for another few years pa but dudu made it possible hehe kasi dudu wants to meet bubu na!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🍗</div>
+        <div class="tl-card">
+          <div class="tl-date">December 20, 2025 · 10:16 AM</div>
+          <div class="tl-ttl">"Our first Jollibee date"</div>
+          <div class="tl-note">Pumunta tayo Odiongan to find souvenirs para may madala ako and lo and behold may Jabee and I have always wanted to eat with you ng magkasama… this is our first jabee date and memorable kasi suot mo ang sweater na binigay ko for you kasi bagay sayo abwebi eh hehe! We had spaghetti na dinali pa natin pauwi kasi di natin maubos… chimken isang bucket and of course yung paborito mo na coke</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌃</div>
+        <div class="tl-card">
+          <div class="tl-date">December 22, 2025 · 3:18 PM</div>
+          <div class="tl-ttl">"Our streetfood date"</div>
+          <div class="tl-note">Here we go again… kinain na naman ni abwebi ang dragon ko and sinakyan pa na naging reason para sumakit ang tiwtiw ko HAHHAH panay sorry pa ikaw abwebi… anyway, this is our first date sa gabi and syempre our streetfood date! Pictures dito pictures doon just for the memories to keep hehe, dami natin inorder abwebi pero di pa din natin naubos nadala mo pa yung puto bumbonb pauwi Sta. Fe but it was also one of the best nights I had with you &lt;3</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">💙</div>
+        <div class="tl-card">
+          <div class="tl-date">December 23, 2025 · 8:12 AM</div>
+          <div class="tl-ttl">"Pag-uwi ni dudu"</div>
+          <div class="tl-note">Nagpicture tayo ng heart sign habang yakap kita kasi dudu is going back to Cebu and etong araw na to is filled with iyak and I wished I hugged you tighter that time abwebi pero I promised na babalik naman adudu and I did hehe and ohhhh kinulayan mo din hair ko ng white na sabi mo is maganda tignan sa akin! This day din abwebi is our first ever milktea natin dalawa before ako sumakay sa bangka… I made sure our 2nd time is one of the best din!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🥺</div>
+        <div class="tl-card">
+          <div class="tl-date">December 27, 2025 · 11:31 AM</div>
+          <div class="tl-ttl">"Naiwan yung scent ko sa kumot"</div>
+          <div class="tl-note">The day my heart broke kaunti… you mentioned na naiwan yung scent ko sa kumot and ayaw mo gamitin para di mawala scent ko abwebi. Ang sakit isipin na ang layo ko ulit sayo and a few hours from that time is monthsary pa natin but dudu promised to be back naman and matulog ulit sa floor</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">💻</div>
+        <div class="tl-card">
+          <div class="tl-date">January 6, 2026 · 12:00 AM</div>
+          <div class="tl-ttl">"Bubu and dudu stickers"</div>
+          <div class="tl-note">Natapos ko na din lagyan ng mark ang kaisa isang bagay na ang sakit sa bulsa ko.. my gaming laptop HAHAHAH pero ang cute lang kasi I have bubu and dudu stickers on it to push away yung mga gustong lumapit sa akin na mga demons na malalandi! I am bubu's, wag kayo lumapit sakin!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🛩️</div>
+        <div class="tl-card">
+          <div class="tl-date">March 27, 2026 · 4:54 PM</div>
+          <div class="tl-ttl">"Balik na si dudu"</div>
+          <div class="tl-note">The day of my flight going back to you abwebi… honestly abwebi eto yung araw na sobrang napagod ako kasi I did not expect a whole day travel… like grabe since morning andun na ako sa airport as early as possible then bangka mga 3:00 PM pa raghhhh but it was all worth it kasi nayakap… nakiss… nakita… ang na hug kita asawa ko! Oh… and eto din yung araw na himiga ikaw sa tiwtiw ko habang naglalaro ng ML HAAHHAHAHA</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🍕</div>
+        <div class="tl-card">
+          <div class="tl-date">March 28, 2026 · 9:28 AM</div>
+          <div class="tl-ttl">"Our first physical monthsary"</div>
+          <div class="tl-note">Araw ng monthsary natin which is hindi ko hinayaan na maging normal day lang kasi this is the first monthsary na magkasama tayo physically! I made sure nakakain mo lahat ng gusto mo, we had pizza, your chimken, and lomi din hehe and medyo natatawa ako pag naalala na binibigyan mo ako ng chimken sa lomi ko HAHAHHA cute abubu! This is also our first Ice Cweam date para ma cool off kasi ang init sa labas tas paiinitin pa natin paguwi mwheehhe and it does not end thereeeee! We had spaghetti and lumpia na gawa natin hehe and the spaghetti na nasarapan ikaw! Dudu's cooking was a success!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌇</div>
+        <div class="tl-card">
+          <div class="tl-date">March 30, 2026 · 5:32 PM</div>
+          <div class="tl-ttl">"Our first clear sunset together"</div>
+          <div class="tl-note">Our first clear sunset together… sobrang calm ng oras na to abwebi because I get to spend it sa isang view na sobrang payapa and kasama pa kita which made it even more better. My model bubu and dudu posing sa sunset hehe cute cute mo sobra asawa ko raghhhhh! Ohhhh and ice cweam ulit, yes… I can confirm na suki tayo doon asawa ko hehe</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🍜</div>
+        <div class="tl-card">
+          <div class="tl-date">April 1, 2026 · 1:56 PM</div>
+          <div class="tl-ttl">"Namalengke tayo para sa pansit!"</div>
+          <div class="tl-note">Pansitttttt! Yes abwebi, eto yung araw na namalengke tayo para magluto ng pansit! And… ice cweam ulit HAHAHAHAH I find it sweet abwebi kasi luto natin yun together… OPO abwebi together haaaa kahit naghiwa lang ako ng fishballs! Hmph! Pero ang cute natin tignan sa video hehe</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌊</div>
+        <div class="tl-card">
+          <div class="tl-date">April 3, 2026 · 8:09 AM</div>
+          <div class="tl-ttl">"Slick back and beach sunsets"</div>
+          <div class="tl-note">Inayos mo buhok ko dito na always ko pa din naaalala, ang cute isipin eh hehe! You said bagay sa akin ang slick back style na buhok which I find it weird and odd kasi on my eyes ang pangit talaga tignan ng style na yan… pero you said it so confidently kaya nagiba ang tingin ko, thank you asawa ko! Ops ops eto din yung time na we had one of the best sunset moments natin becauseeeeee naglakad tayo sa hunas na beach ng sobrang tagal with many photos and videos! Sobrang astig talaga ng sunset shots natin asawa ko like as in! and you kissed me in public too, ang oa ko siguro sa part nato pero ang sweet for me abwebi kasi kahit malayo ang iba and probably nakikita nila tayo and ginawa mo pa din… and sinubo ulit ni bubu ang dragon ni dudu paguwi for almost 8 minutes AHHAHAHA</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌸</div>
+        <div class="tl-card">
+          <div class="tl-date">April 4, 2026 · 10:05 AM</div>
+          <div class="tl-ttl">"Winasak ni dudu ang pagmamayari niya"</div>
+          <div class="tl-note">Early early… sex kami ni abwebi mwehehhe winasak ni dudu ang pagmamayari niya which is si bubu! I think eto yung sex natin abwebi na nasabi mo na nagdugo ikaw… sowwy for that abwebiiii akala ko abait na adudu nung time nay un ehhhhh! Pero it was fun mwehehh ulitin natin asawa ko! We also had dinner yung potato mojos, pansit ulitttt and tofu squares and halo halo… and you kissed me in public ulit! Wahhhh sobrang happy ko talaga sa araw na yun abwebi!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌄</div>
+        <div class="tl-card">
+          <div class="tl-date">April 5, 2026 · 7:35 AM</div>
+          <div class="tl-ttl">"The last sunset before going home"</div>
+          <div class="tl-note">We planned magpunta sa market para sa ating gagawin na Bicol Express kasi minamalas tayo sa meat HAHAAHAH but still ang memorable ng araw na to kasi I get to spend it even just for a few minutes na katabi kita sa park… as much as I want na pahigain ka sa balikat ko baka may makakita eh… pinagsilbihan mo si dudu ng cooking skills mo and I am so happy hehe oh.. and kinantot kita sa CR asawa ko with sabunot and video mwehehhe I hope you enjoyed nun abwebi! Tapos we went up by 6:18 PM para tignan ang sunset kasi it's the last sunset makikita ko before ako uuwi ulit sa Cebu and we looked at the stars habang nakahiga… sobrang tumatak yun sa akin abwebi! Tas bumalik na tayo to have our photobooth pictorial sa laptop na cute cute sobra! Ipapa print ko to hmmm di ko lang alam saan!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌊</div>
+        <div class="tl-card">
+          <div class="tl-date">April 6, 2026 · 11:34 AM</div>
+          <div class="tl-ttl">"Hanggang sa muli, asawa ko"</div>
+          <div class="tl-note">Sobrang bothered ako nung time na to kasi naguguluhan ako sa schedule ng bangka and baka di mo ako maabutan abwebi kasi bumibili ka pa ng milktea… di ko ma explain kaba ko nun but I was scared na umuwi na hindi kita nakikita for one last time! I was happy and sad at the same time… masaya ako na nayakap kita sa harap ng madaming tao nun kahit saglit lang! I saw you wave at me for the last time before disappearing sa sea wall… sakit heart adudu nun but wala choice abwebi eh I have to go home… pero as always… I WILL COME BACK TO YOU ASAWA KO!</div>
+        </div>
+      </div>
+
+      <div class="tl-entry">
+        <div class="tl-dot">🌙</div>
+        <div class="tl-card">
+          <div class="tl-date">Today · April 28, 2026</div>
+          <div class="tl-ttl">"Happy 5th monthsary, asawa ko 🐧"</div>
+          <div class="tl-note">Another special day for us asawa ko... pinipili pa din natin ang isa't isa, puno ng tawanan and kulitan and unti unti naggrow into better dudu and bubu... one day, one memory, slowly but one at a time. This day is for us asawa ko so please smile and don't be sad ha kasi kilala kita abwebi eh, we will celebrate countless monthsary abwebi and anniversaries din hehe! Mahal na mahal kita asawa ko, this gift is for you!</div>
+        </div>
+      </div>
+
+    </div>
+    <p class="reveal" style="text-align:center;font-family:'Dancing Script',cursive;color:var(--text-light);font-style:italic;margin-top:1rem;">more memories coming soon… 🌙</p>
+  </div>
+</div>
+
+<!-- ========== GALLERY ========== -->
+<div class="page" id="page-gallery">
+  <div class="page-inner">
+    <h2 class="section-title reveal" style="margin-bottom:2rem;">Our Scrapbook</h2>
+    <div class="polaroid-grid" id="polaroidGrid"></div>
+  </div>
+</div>
+
+<!-- lightbox -->
+<div class="lbx" id="lbx" onclick="closeLbx()">
+  <button class="lbx-x" onclick="closeLbx()">×</button>
+  <div class="lbx-inner" onclick="event.stopPropagation()">
+    <div class="lbx-img" id="lbxImg"></div>
+    <div class="lbx-cap" id="lbxCap"></div>
+  </div>
+</div>
+
+<!-- ========== LETTER ========== -->
+<div class="page" id="page-letter">
+  <div class="page-inner">
+    <h2 class="section-title reveal" style="margin-bottom:2rem;">A Letter For You</h2>
+    <div class="letter-wrap reveal">
+      <div class="letter-header">
+        <div class="letter-person">
+          <div class="letter-role">Otter / Dudu</div>
+          <div class="letter-name">Fritz Gerald Gravines</div>
+        </div>
+        <div class="letter-center-header">
+          <div class="letter-big-heart">💗</div>
+          <div class="letter-monthsary-txt">Happy 5th official monthsary!</div>
+        </div>
+        <div class="letter-person">
+          <div class="letter-role">Pengu / Bubu</div>
+          <div class="letter-name">Edric John Arevalo</div>
+        </div>
+      </div>
+      <div class="letter-body" id="letterBody"></div>
+      <div class="letter-sign">Forever yours, your Otter 🦦</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ========== GLOBAL MUSIC PLAYER ========== -->
+<audio id="bgMusic" preload="auto"></audio>
+<!-- silent autoplay video to unlock audio context without user interaction -->
+<video id="silentUnlock" muted autoplay playsinline loop
+  style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;">
+  <source src="Pengu and Otter.mp4" type="video/mp4">
+</video>
+
+<!-- ========== REASONS ========== -->
+<div id="floatingField"></div>
+
+<div class="page" id="page-reasons">
+  <div class="page-inner">
+    <h2 class="section-title reveal" style="margin-bottom:1rem;">Reasons I Love You</h2>
+    <p class="reasons-hint reveal">catch a floating heart to read its secret 🌙</p>
+    <p id="heartCount" style="font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text-light);text-align:center;margin-top:.4rem;pointer-events:none;opacity:.6;">60 hearts waiting for you 💕</p>
+  </div>
+</div>
+
+<!-- heart modal -->
+<div class="hmodal" id="hmodal" onclick="closeHmodal()">
+  <div class="hmodal-card" onclick="event.stopPropagation()">
+    <span class="hmodal-emoji" id="hmodalEmoji">💖</span>
+    <div class="hmodal-text" id="hmodalText"></div>
+    <button class="hmodal-close" onclick="closeHmodal()">so sweet 🥺</button>
+  </div>
+</div>
+
+<!-- ========== FINALE ========== -->
+<div class="page" id="page-finale">
+  <div class="page-inner">
+    <h2 class="section-title reveal">One Last Thing…</h2>
+    <p class="reveal" style="font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--text-light);margin-bottom:3rem;">click the heart when you're ready 🤍</p>
+    <button class="finale-btn" onclick="triggerFinale()">💖</button>
+    <p class="finale-hint reveal">tap me, Pengu 🐧</p>
+  </div>
+</div>
+
+<!-- finale overlay -->
+<div class="foverlay" id="foverlay">
+  <div class="burst-wrap" id="burstWrap"></div>
+  <p class="fmsg">"No matter how many months pass…<br>I will always choose you, Pengu 🐧."</p>
+  <p class="fsign">— Love, your Otter 🦦</p>
+  <button class="fclose" onclick="closeFinale()">carry this with you 💕</button>
+</div>
+
+
+
+<!-- ========== JS ========== -->
+<script>
+/* ---- STARS ---- */
+const sc = document.getElementById('starBg');
+const sx = sc.getContext('2d');
+function rsz(){ sc.width=innerWidth; sc.height=innerHeight; }
+rsz(); addEventListener('resize', rsz);
+
+const STARS = Array.from({length:260},()=>({
+  x:Math.random(), y:Math.random(),
+  r:Math.random()*1.6+.2,
+  spd:Math.random()*.02+.004,
+  ph:Math.random()*Math.PI*2,
+  col:Math.random()<.15?'245,194,199':Math.random()<.15?'184,212,240':'255,255,255'
+}));
+
+const shoots=[];
+setInterval(()=>shoots.push({
+  x:Math.random()*sc.width, y:Math.random()*sc.height*.5,
+  len:80+Math.random()*120, spd:6+Math.random()*8,
+  ang:Math.PI/5+Math.random()*.3, prog:0
+}), 4000);
+
+function drawS(ts){
+  sx.clearRect(0,0,sc.width,sc.height);
+  const t=ts/1000;
+  STARS.forEach(s=>{
+    const a=(Math.sin(t*s.spd*6+s.ph)+1)/2*.85+.15;
+    sx.beginPath();
+    sx.arc(s.x*sc.width,s.y*sc.height,s.r,0,Math.PI*2);
+    sx.fillStyle=`rgba(${s.col},${a})`;
+    sx.fill();
+  });
+  for(let i=shoots.length-1;i>=0;i--){
+    const s=shoots[i]; s.prog+=s.spd;
+    const fade=Math.max(0,1-s.prog/s.len);
+    sx.save(); sx.globalAlpha=fade*.85; sx.strokeStyle='#fff'; sx.lineWidth=1.5;
+    sx.beginPath();
+    sx.moveTo(s.x+s.prog*Math.cos(s.ang),s.y+s.prog*Math.sin(s.ang));
+    sx.lineTo(s.x+(s.prog-s.len*.4)*Math.cos(s.ang),s.y+(s.prog-s.len*.4)*Math.sin(s.ang));
+    sx.stroke(); sx.restore();
+    if(s.prog>s.len) shoots.splice(i,1);
+  }
+  requestAnimationFrame(drawS);
+}
+requestAnimationFrame(drawS);
+
+/* ---- COUNTDOWN ---- */
+const UNLOCK=new Date('2026-04-28T00:00:00');
+const pad=n=>String(n).padStart(2,'0');
+function tick(){
+  const d=UNLOCK-Date.now();
+  if(d<=0){
+    document.getElementById('cd-d').textContent='00';
+    document.getElementById('cd-h').textContent='00';
+    document.getElementById('cd-m').textContent='00';
+    document.getElementById('cd-s').textContent='00';
+    const unlockDate = document.getElementById('unlockDate');
+    if(unlockDate) unlockDate.style.display='none';
+    return;
+  }
+  document.getElementById('cd-d').textContent=pad(Math.floor(d/86400000));
+  document.getElementById('cd-h').textContent=pad(Math.floor((d%86400000)/3600000));
+  document.getElementById('cd-m').textContent=pad(Math.floor((d%3600000)/60000));
+  document.getElementById('cd-s').textContent=pad(Math.floor((d%60000)/1000));
+}
+tick(); setInterval(tick,1000);
+
+// countdown floating emojis — starts immediately, lots of them
+const cdE=['💙','💜','🤍','💗','✨','🌸','🐧','🦦','💕','⭐','🌙','💫','🌷','💝','🥺','💞'];
+for(let i=0;i<40;i++){
+  const h=document.createElement('div');
+  h.className='cd-heart';
+  h.textContent=cdE[Math.floor(Math.random()*cdE.length)];
+  h.style.left=Math.random()*100+'vw';
+  h.style.animationDuration=(7+Math.random()*10)+'s';
+  h.style.animationDelay=(Math.random()*8)+'s';
+  h.style.fontSize=(.8+Math.random()*1.2)+'rem';
+  document.getElementById('countdown-screen').appendChild(h);
+}
+
+// secret dev bypass — Enter key only, always works
+function checkPw(){
+  const val = document.getElementById('pwInput').value.trim().toLowerCase();
+  if(val === 'dudu') unlock();
+}
+
+// Pengu's button — only works when timer is done
+function penguUnlock(){
+  const remaining = UNLOCK - Date.now();
+  if(remaining > 0){
+    const err = document.getElementById('penguErr');
+    err.textContent = "It's still not time pengu… 🐧";
+    err.style.opacity='1';
+    setTimeout(()=>err.style.opacity='0', 2500);
+  } else {
+    unlock();
+  }
+}
+
+function unlock(){
+  const cs=document.getElementById('countdown-screen');
+  cs.classList.add('fade-out');
+  setTimeout(()=>{
+    cs.style.display='none';
+    document.getElementById('main-nav').classList.add('on');
+    go('landing');
+    setTimeout(positionBtn, 50);
+  },1600);
+}
+
+/* ---- ROUTING ---- */
+let curPage=null, letterDone=false, heartsDone=false;
+
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.classList.remove('visible'); });
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('cur'));
+  const page=document.getElementById('page-'+name);
+  if(page){ page.classList.add('active'); requestAnimationFrame(()=>requestAnimationFrame(()=>page.classList.add('visible'))); }
+  const nl=document.getElementById('n'+name[0]+(name==='landing'?'l':name==='story'?'s':name==='gallery'?'g':name==='letter'?'r':name==='reasons'?'w':'f'));
+  // simpler: just match by href text
+  document.querySelectorAll('nav a').forEach(a=>{
+    if(a.getAttribute('onclick').includes("'"+name+"'")) a.classList.add('cur');
+  });
+
+  // nav — hide on landing so bubu can't skip ahead
+  document.getElementById('main-nav').style.display = name==='landing'?'none':'flex';
+
+  // enter btn — only show on landing, and only if landing is still active
+  const eb=document.getElementById('enterBtn');
+  if(eb) eb.style.display = name==='landing'?'':'none';
+
+  // floating hearts
+  const ff=document.getElementById('floatingField');
+  if(name==='reasons'){ ff.classList.add('show'); } else { ff.classList.remove('show'); }
+
+  curPage=name;
+  if(name==='story')   initReveal(page);
+  if(name==='gallery') initGallery();
+  if(name==='letter')  { initReveal(page); if(!letterDone){letterDone=true;setTimeout(initLetter,400);} }
+  if(name==='reasons') { initReveal(page); if(!heartsDone){heartsDone=true;initHearts();} }
+  if(name==='finale')  initReveal(page);
+  scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---- ENTER BTN ---- */
+let ec=0;
+const btxts=['Click me abwebi 💖','Ops ops, hindi pa 👀','Again asawa ko hehe! 😂','Habulin mo ko pengu 🫣','Malapit na abwebi! 🌸','Hays, sige na nga hmph... 🥺','Sike abwebi! 😛','Thou shall enter! 💕'];
+let lastQuad=-1;
+function runBtn(b){
+  let quad;
+  do { quad=Math.floor(Math.random()*4); } while(quad===lastQuad);
+  lastQuad=quad;
+  const bw=b.offsetWidth||180, bh=b.offsetHeight||50;
+  const pad=20;
+  const zones=[
+    { x:pad, y:pad, w:innerWidth/2-bw-pad, h:innerHeight/2-bh-pad },
+    { x:innerWidth/2, y:pad, w:innerWidth/2-bw-pad, h:innerHeight/2-bh-pad },
+    { x:pad, y:innerHeight/2, w:innerWidth/2-bw-pad, h:innerHeight/2-bh-pad },
+    { x:innerWidth/2, y:innerHeight/2, w:innerWidth/2-bw-pad, h:innerHeight/2-bh-pad },
+  ];
+  const z=zones[quad];
+  b.style.left=(z.x+Math.random()*Math.max(z.w,0))+'px';
+  b.style.top=(z.y+Math.random()*Math.max(z.h,0))+'px';
+  b.style.transform='';
+}
+function handleEnter(){
+  ec++;
+  const b=document.getElementById('enterBtn');
+  if(ec <= 6){
+    // clicks 1-6: ALL run away (includes Sike at ec=6)
+    b.textContent=btxts[ec];
+    runBtn(b);
+    b.style.pointerEvents='none';
+    setTimeout(()=>{ b.style.pointerEvents=''; }, 400);
+  } else {
+    // click 7: "Thou shall enter!" — back to original spot, no running
+    b.textContent=btxts[7];
+    b.style.transition='left .5s ease, top .5s ease, opacity .4s';
+    positionBtn();
+    b.onclick=()=>{
+      b.style.opacity='0';
+      setTimeout(()=>{
+        const lp=document.getElementById('page-landing');
+        if(lp){ lp.style.display='none'; lp.classList.remove('active'); }
+        b.style.display='none';
+        go('story');
+      },400);
+    };
+  }
+}
+// video fallback
+const lv = document.getElementById('landVideo');
+const lvFb = document.getElementById('landFallback');
+if(lv){
+  const showFallback = () => {
+    lv.style.display='none';
+    if(lvFb){ lvFb.style.display='flex'; }
+  };
+  lv.addEventListener('error', showFallback);
+  // also show fallback if video stalls for 3s without playing
+  lv.addEventListener('loadedmetadata', () => {
+    const t = setTimeout(()=>{ if(lv.paused) showFallback(); }, 3000);
+    lv.addEventListener('playing', ()=>clearTimeout(t), {once:true});
+  });
+}
+// position button over its placeholder on load and on resize
+function positionBtn(){
+  const ph=document.getElementById('btnPlaceholder');
+  const b=document.getElementById('enterBtn');
+  if(!ph||!b) return;
+  const r=ph.getBoundingClientRect();
+  b.style.left=(r.left + r.width/2 - b.offsetWidth/2)+'px';
+  b.style.top=r.top+'px';
+  b.style.transform='';
+}
+window.addEventListener('resize', positionBtn);
+// initial reveal
+
+/* ---- REVEAL ---- */
+function initReveal(root){
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('on');
+  }),{threshold:.12});
+  (root||document).querySelectorAll('.reveal,.tl-entry').forEach(el=>obs.observe(el));
+}
+
+/* ---- GALLERY ---- */
+const galleryData=[
+  {img:'Image1.jpg',  cap:'our photobooth pictorial hehe'},
+  {img:'Image2.jpg',  cap:'my cutesie model bubu'},
+  {img:'Image3.jpg',  cap:'our sweet sunset moment'},
+  {img:'Image4.png',  cap:'a kiss to forever'},
+  {img:'Image5.jpg',  cap:"bubu's spot"},
+  {img:'Image6.png',  cap:'Gojo Temu Version w/ Bubu'},
+  {img:'Image7.jpg',  cap:'my shy asawa in a ice cweam shop'},
+  {img:'Image8.jpg',  cap:'bubu and dudu date'},
+  {img:'Image9.jpg',  cap:'heart sign to the sky'},
+  {img:'Image10.jpeg',cap:'smiling bubu and dudu in all black'},
+  {img:'Image11.jpg', cap:"dudu's dangerous lick of poison"},
+  {img:'Image12.jpg', cap:'short stay at the park'},
+  {img:'Image13.jpg', cap:'Karate Chan? No. Karate Bubu!'},
+  {img:'Image14.jpg', cap:'rooftop cries under orange hues'},
+  {img:'Image15.jpg', cap:'tired bubu from work? Or… sex? Hehe'},
+  {img:'Image16.jpg', cap:'eepy dudu and bad bubu'},
+  {img:'Image17.jpg', cap:'food photoshoot ni model bubu!'},
+  {img:'Image18.jpg', cap:'our memorable sunset date…'},
+];
+let galDone=false;
+function initGallery(){
+  if(galDone) return; galDone=true;
+  const g=document.getElementById('polaroidGrid');
+  g.innerHTML='';
+  galleryData.forEach(item=>{
+    const d=document.createElement('div'); d.className='polaroid';
+    const img=document.createElement('div'); img.className='polaroid-img';
+    if(item.img){ const i=document.createElement('img'); i.src=item.img; i.alt=item.cap; img.appendChild(i); }
+    else img.textContent=item.emoji;
+    const c=document.createElement('span'); c.className='polaroid-cap'; c.textContent=item.cap;
+    d.appendChild(img); d.appendChild(c);
+    d.onclick=()=>openLbx(item);
+    g.appendChild(d);
+  });
+  setTimeout(()=>initReveal(document.getElementById('page-gallery')),50);
+}
+function openLbx(item){
+  const li=document.getElementById('lbxImg'); li.innerHTML='';
+  if(item.img){ const i=document.createElement('img'); i.src=item.img; i.alt=item.cap; li.appendChild(i); }
+  else { li.textContent=item.emoji; li.style.fontSize='6rem'; }
+  document.getElementById('lbxCap').textContent=item.cap;
+  document.getElementById('lbx').classList.add('on');
+}
+function closeLbx(){ document.getElementById('lbx').classList.remove('on'); }
+
+/* ---- LETTER ---- */
+const LETTER=`Hewwo asawa ko! 🥺💗 I know things has been a bit rocky… ROCKY?! HAHAHA pero seriously abwebi medyo madami tayong hindi pagkakaintindihan lately pero always natin dinadaan sa pagpapatawad and pagmamahalan… 💕 sobrang thankful ako na I found someone na hindi ma pride kasi it was one of my wish kay G na sana I find someone understanding and emotional. 🙏💙
+
+As much as I want to celebrate our monthsary ulit together ng magkasama asawa ko kasi we get to do a lot of things… let's save it for my next trip nalang abwebi ha! 🌸💓 We cried a lot during my 2nd visit asawa ko because sa mga nangyayari sa atin pero mas umaapaw yung pagiintindihan nating dalawa and I appreciate it sobra because hindi ikaw sumusuko agad… 💝 there is distance everytime may misunderstanding at kaunting away at tampuhan but I promise you abwebi I am doing the best I can to make sure my bubu only stays smiling and not iyak ng iyak! 🥹💕
+
+It is our 5th official monthsary asawa ko… 💖 damnnnn ang tagal na natin abwebi hehe tatagalan pa natin hanggang sa we grow old… kahit old ka na… AY SORRY ABWEBIIIIII joke lang kasi!!! 😂❤️ I promised G na sa pagtanda natin aalalayan kita sa mga araw na mahihirapan ka na lumakad… na paliliguan ka if hindi mo na kaya gawin magisa ang pakainin ka ng mga iba't ibang pagkain. 💗 I will do everything ng makakaya ko just to give you the life you deserve abwebi kaya I am working hard kasi you deserve everything! 💪🌙💕
+
+Sa next balik ko asawa ko… let's eat more foods na luto natin dalawa hehe and avoid yung mga pwede maging sanhi ng misunderstanding. 🍜💓 More dates sa Ice Cweam shop… more kain doon sa usual place natin hehe, more pizza and vitamilk, more stick-o, and syempre more Ice HAHAHAHAA! 🍕🍦💗 Dudu and Bubu should focus sa kain kain kain… busog lusog dapat ang abubu ko everytime hehe, sexy bubu!!! 😆❤️
+
+I want us to witness more sunsets together asawa ko 🌅💕 and hopefully in the near future is we will get to travel to other places sa Philippines… ang gandang pangarap kung iisipin which is tutuparin ko sa abot ng makakaya ko! 💙 Also abwebi pengu ko, let's go to Jabee sa next balik ko kasi I want to treat you there ulit or possible if may bagong food stalls kakain din tayo doon! 🫶💗
+
+Thank you asawa ko ha for always choosing me despite my insecurities, overthinking and problems ko sa sarili ko… 💝 you always see the best in me kahit ano man ang gawin ko and I may not say it a lot pero I am sobrang swerte to have you in my life as early in my lifetime! 💙💖 My main dream is to marry you outside the country asawa ko, I know ayaw mo masyado pagusapan yan kaya I am sorry abwebi ha but I mean it sobra… I want to live my life with you, don't worry abwebi the promise ring I promised… 💍💗 I will be giving it to you sa next balik ko kasi I want to give it personally and dudu will bring a stand for the phone so we can video sa may beachfront banda pag may sunset ulit! 💍🌅💕
+
+Happy official 5th monthsary ulit to us bubu, asawa, jowa, boyfriend, abwebi, biib, baby, pengu, sunflower, tahanan, and iklog ko na cute cute, mapagmahal, matalino, pogi, serendipitous… SERENDIPITOUS?! 😂💓 sexy, hot, understanding, simple, loyal, true and… masikip mwehehheh! 🥵❤️ Thank you for being mine asawa ko… thank you for letting me be yours… thank you for our little world… thank you for loving me with all love and honesty! 🤍💖
+
+I love you asawa ko for eternity, just like the water… our love flows smoothly and shines sa the sun ray hits… 🌊☀️💗 I miss you sobra asawa ko and I hope you will love and appreciate what I made for you! 🦦🐧💕💙💗`;
+
+function initLetter(){
+  const b=document.getElementById('letterBody'); b.textContent='';
+  let i=0;
+  function type(){ if(i<LETTER.length){ b.textContent+=LETTER[i++]; setTimeout(type,18); } }
+  type();
+}
+/* ---- MUSIC PLAYLIST ---- */
+const PLAYLIST = ['1st Music.mp3','2nd Music.mp3','3rd Music.mp3'];
+let plIdx = 0;
+let musOn = false;
+let musFadeInterval = null;
+const FADE_STEPS = 30;
+const FADE_DURATION = 1200; // ms total fade
+
+const audio = document.getElementById('bgMusic');
+audio.volume = 0;
+
+function setTrack(idx, autoplay) {
+  plIdx = ((idx % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
+  audio.src = PLAYLIST[plIdx];
+  audio.load();
+  updateNowPlaying();
+  if (autoplay) {
+    audio.addEventListener('canplaythrough', function onReady() {
+      audio.removeEventListener('canplaythrough', onReady);
+      fadeIn();
+    }, { once: true });
+  }
+}
+
+function fadeIn() {
+  clearInterval(musFadeInterval);
+  audio.volume = 0;
+  audio.play().catch(() => {});
+  musOn = true;
+  updateBars(true);
+  let step = 0;
+  musFadeInterval = setInterval(() => {
+    step++;
+    audio.volume = Math.min(1, step / FADE_STEPS);
+    if (step >= FADE_STEPS) clearInterval(musFadeInterval);
+  }, FADE_DURATION / FADE_STEPS);
+}
+
+function fadeOut(cb) {
+  clearInterval(musFadeInterval);
+  musFadeInterval = -1; // sentinel so timeupdate won't re-trigger
+  let step = FADE_STEPS;
+  musFadeInterval = setInterval(() => {
+    step--;
+    audio.volume = Math.max(0, step / FADE_STEPS);
+    if (step <= 0) {
+      clearInterval(musFadeInterval);
+      musFadeInterval = null;
+      audio.pause();
+      if (cb) cb();
+    }
+  }, FADE_DURATION / FADE_STEPS);
+}
+
+// When a track ends, crossfade to the next
+audio.addEventListener('ended', () => {
+  fadeOut(() => setTrack(plIdx + 1, true));
+});
+
+// Also catch near-end for seamless feel (0.5s before end)
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration && audio.currentTime >= audio.duration - (FADE_DURATION / 1000) && !audio.ended) {
+    if (audio.volume > 0 && musFadeInterval === null) {
+      fadeOut(() => setTrack(plIdx + 1, true));
+    }
+  }
+});
+
+function toggleMusic() {
+  if (musOn) {
+    fadeOut(() => { musOn = false; updateBars(false); });
+  } else {
+    if (!audio.src || audio.src === window.location.href) {
+      setTrack(0, true);
+    } else {
+      fadeIn();
+    }
+  }
+}
+
+function updateBars(playing) {
+  document.querySelectorAll('.mus-bar').forEach(b =>
+    playing ? b.classList.remove('paused') : b.classList.add('paused')
+  );
+}
+
+const TRACK_NAMES = ['1st Music 🎵', '2nd Music 🎵', '3rd Music 🎵'];
+function updateNowPlaying() {
+  document.querySelectorAll('.now-playing-title').forEach(el => {
+    el.textContent = '🎵 ' + TRACK_NAMES[plIdx];
+  });
+}
+
+// Use silent video autoplay to unlock audio, then start music immediately
+let musicStarted = false;
+function tryStartMusic() {
+  if (!musicStarted) {
+    musicStarted = true;
+    setTrack(0, true);
+    document.removeEventListener('click', tryStartMusic);
+    document.removeEventListener('touchstart', tryStartMusic);
+  }
+}
+const silentVideo = document.getElementById('silentUnlock');
+silentVideo.addEventListener('playing', () => {
+  if (!musicStarted) {
+    musicStarted = true;
+    setTrack(0, true);
+  }
+}, { once: true });
+// fallback: first interaction
+document.addEventListener('click', tryStartMusic);
+document.addEventListener('touchstart', tryStartMusic);
+
+/* ---- FLOATING HEARTS ---- */
+const REASONS=[
+  {e:'💙', t:'Mahal kita kasi ikaw ang bubu ko.'},
+  {e:'💗', t:'Mahal kita kasi kahit anong mood ko, kaya mo ako e handle.'},
+  {e:'🤍', t:'Yung "kamusta ikaw asawa ko?" mo, parang love language ko na.'},
+  {e:'💜', t:'Kahit simpleng chat mo, napapangiti mo ako.'},
+  {e:'💛', t:'Mahal kita kasi ikaw agad naiisip ko pagkagising ko.'},
+  {e:'🧡', t:'At ikaw din yung huli kong naiisip bago matulog.'},
+  {e:'💖', t:"Ang lambing mo sa akin kahit minsan makulit ako."},
+  {e:'❤️', t:'Mahal kita kasi hindi ka nagsasawa sa\'kin.'},
+  {e:'💝', t:'Kahit paulit ulit ako, pinapakinggan mo pa rin ako.'},
+  {e:'💗', t:'Mahal kita kasi ramdam ko na ako yung pinipili mo.'},
+  {e:'💙', t:'Ang cute mo kapag inaasar mo ako.'},
+  {e:'💕', t:'Mahal kita kasi kahit corny ka minsan, tawang tawa pa rin ako.'},
+  {e:'🤍', t:'Ikaw yung comfort ko kapag pagod na ako sa lahat.'},
+  {e:'💜', t:'Mahal kita kasi alam mo kung kailan ako tahimik lang.'},
+  {e:'💛', t:'Kahit wala kang sabihin, naiintindihan mo ako.'},
+  {e:'🧡', t:"Mahal kita kasi safe ako sa'yo."},
+  {e:'💖', t:'Yung boses mo, nakaka-relax pakinggan.'},
+  {e:'❤️', t:'Kahit simpleng "miss kita" ang sarap sarap sa pakiramdam.'},
+  {e:'💝', t:'Mahal kita kasi ikaw yung pahinga ko.'},
+  {e:'💙', t:'Ikaw yung gusto kong kausap kahit walang sense.'},
+  {e:'💗', t:'Ang saya mo ka bonding kahit simpleng bagay lang.'},
+  {e:'🤍', t:'Mahal kita kasi kaya mong gawing special yung ordinary days ko.'},
+  {e:'💜', t:'Kahit busy ka, hindi mo ako nakakalimutan.'},
+  {e:'💛', t:'Mahal kita kasi priority mo ako.'},
+  {e:'🧡', t:'Kahit may tampuhan, hindi mo ako pinapabayaan.'},
+  {e:'💖', t:'Mahal kita kasi marunong kang magsorry.'},
+  {e:'❤️', t:'At marunong ka ring umintindi.'},
+  {e:'💝', t:'Mahal kita kasi hindi mo ako sinusukuan.'},
+  {e:'💗', t:'Kahit nagooverthink ako, pinapakalma mo ako.'},
+  {e:'💙', t:'Mahal kita kasi pinaparamdam mong hindi ako mag-isa.'},
+  {e:'💕', t:'Ang sarap mong mahalin, sobra.'},
+  {e:'🤍', t:'Mahal kita kasi ikaw yung peace ko.'},
+  {e:'💜', t:'Kahit pagod ako, nawawala dahil sa\'yo.'},
+  {e:'💛', t:'Mahal kita kasi ikaw yung tahanan ko.'},
+  {e:'🧡', t:'Ang lambing ng yakap mo (kahit sa isip lang minsan 🥹).'},
+  {e:'💖', t:'Mahal kita kasi gusto kitang alagaan din.'},
+  {e:'❤️', t:'Kahit wala tayong ginagawa, masaya ako basta ikaw kasama ko.'},
+  {e:'💝', t:'Mahal kita kasi ikaw yung dahilan ng ngiti ko.'},
+  {e:'💗', t:'Ikaw yung gusto kong kwentuhan ng lahat.'},
+  {e:'💙', t:'Mahal kita kasi ikaw yung kakampi ko.'},
+  {e:'💕', t:'Kahit anong mangyari, gusto kitang kasama.'},
+  {e:'🤍', t:'Mahal kita kasi ikaw yung pahinga ko sa mundo.'},
+  {e:'💜', t:'Ang cute mo kahit hindi ka aware 😆'},
+  {e:'💛', t:"Mahal kita kasi totoo ka sa'kin."},
+  {e:'🧡', t:'Hindi mo kailangan magpanggap kapag kasama ako.'},
+  {e:'💖', t:'Mahal kita kasi tinutulungan mo akong maging better.'},
+  {e:'❤️', t:'Dahil sayo mas nagiging masaya ako.'},
+  {e:'💝', t:'Mahal kita kasi proud ako sa\'yo palagi.'},
+  {e:'💗', t:'Kahit malayo ka, ramdam pa rin kita.'},
+  {e:'💙', t:'Mahal kita kasi ikaw lang yan and walang kapalit.'},
+  {e:'💕', t:'Ikaw yung gusto kong kausap sa future.'},
+  {e:'🤍', t:'Mahal kita kasi ikaw yung gusto kong makasama sa lahat.'},
+  {e:'💜', t:'Kahit maliit na bagay special kapag ikaw.'},
+  {e:'💛', t:'Mahal kita kasi ikaw yung pahinga at saya ko.'},
+  {e:'🧡', t:'Kahit imperfect tayo, perfect tayo together.'},
+  {e:'💖', t:'Mahal kita kasi ikaw yung best decision ko.'},
+  {e:'❤️', t:'Ikaw yung gusto kong kasama sa lahat ng plano ko.'},
+  {e:'💝', t:'Mahal kita kasi ikaw yung forever kong pipiliin.'},
+  {e:'💗', t:'Kahit anong mangyari, ikaw pa rin.'},
+  {e:'💙', t:'Mahal kita… kasi ikaw yung bubu ko at wala nang iba.'},
+];
+
+let remainingReasons=[...REASONS]; // track unclicked hearts
+
+function initHearts(){
+  remainingReasons=[...REASONS]; // reset on re-init
+  const ff=document.getElementById('floatingField');
+  ff.innerHTML='';
+  REASONS.forEach((r,idx)=>{
+    spawnHeart(r, idx, ff);
+  });
+}
+
+function spawnHeart(r, idx, ff){
+  const h=document.createElement('div');
+  h.className='fheart';
+  h.textContent=r.e;
+  h.dataset.idx=idx;
+  const startX=5+Math.random()*85;
+  const dur=14+Math.random()*16;
+  const delay=Math.random()*22;
+  const sw=(Math.random()-.5)*90;
+  const rot=(Math.random()-.5)*28;
+  h.style.left=startX+'vw';
+  h.style.animationDuration=dur+'s';
+  h.style.animationDelay=delay+'s';
+  h.style.setProperty('--sw', sw+'px');
+  h.style.setProperty('--sw2',(-sw*.6)+'px');
+  h.style.setProperty('--r',  rot+'deg');
+  h.style.setProperty('--r2', (-rot*.7)+'deg');
+  h.style.fontSize=(1.8+Math.random()*.8)+'rem';
+  h.addEventListener('click', ev=>{
+    ev.stopPropagation();
+    // pop it off the screen first
+    h.style.transition='transform 0.3s ease, opacity 0.4s ease';
+    h.style.transform='scale(2)';
+    h.style.opacity='0';
+    h.style.pointerEvents='none';
+    setTimeout(()=>h.remove(), 400);
+    // update counter
+    const remaining = document.querySelectorAll('#floatingField .fheart').length - 1;
+    const counter = document.getElementById('heartCount');
+    if(counter){
+      if(remaining===0) counter.textContent='you found them all 🥹💕';
+      else counter.textContent=remaining+' heart'+(remaining===1?'':'s')+' left 💕';
+    }
+    openHmodal(r.e, r.t);
+  });
+  ff.appendChild(h);
+}
+
+function openHmodal(e,t){
+  document.getElementById('hmodalEmoji').textContent=e;
+  document.getElementById('hmodalText').textContent=t;
+  document.getElementById('hmodal').classList.add('on');
+}
+function closeHmodal(){ document.getElementById('hmodal').classList.remove('on'); }
+
+/* ---- FINALE ---- */
+function triggerFinale(){
+  document.getElementById('foverlay').classList.add('on');
+  const bw=document.getElementById('burstWrap'); bw.innerHTML='';
+  const cx=innerWidth/2, cy=innerHeight/2;
+  const em=['💕','💙','🤍','💜','💗','✨','🌸','💫','⭐'];
+  for(let i=0;i<35;i++){
+    const h=document.createElement('div'); h.className='burst-h';
+    h.textContent=em[Math.floor(Math.random()*em.length)];
+    const ang=Math.random()*360, dist=120+Math.random()*280;
+    h.style.left=cx+'px'; h.style.top=cy+'px';
+    h.style.setProperty('--tx',(Math.cos(ang*Math.PI/180)*dist)+'px');
+    h.style.setProperty('--ty',(Math.sin(ang*Math.PI/180)*dist)+'px');
+    h.style.animationDelay=(Math.random()*.5)+'s';
+    bw.appendChild(h);
+  }
+  setTimeout(()=>bw.innerHTML='',3500);
+}
+function closeFinale(){ document.getElementById('foverlay').classList.remove('on'); }
+
+/* ---- ESC ---- */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeLbx(); closeHmodal(); closeFinale(); }
+});
+</script>
+</body>
+</html>
